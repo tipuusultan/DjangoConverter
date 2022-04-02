@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}PDF to Image{% endblock title %}
+
+{% block body %}
+
+<form class='my-5 container' method="POST" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+<h2>Upload you PDF</h2>
+  <div class="form-group">
+    <p style='color:red'>The name of your PDF file should not be included with any spaces. <b>Example: my pdf file.pdf, demo pdf.pdf<b></p>
+    <input name="pdf" type="file" class="form-control-file" id="exampleFormControlFile1">
+  </div>
+  <button class='primary'>Submite</button>
+</form>
+
+{% if request.method == 'POST' %}
+<div class='container'>
+<h2>Your Images: </h2>
+<a href="{{site_url }}{{zip_file_link}}"><h2>Download All Images</h2></a>
+</div>
+<div class='container'>
+{% for d in download_link %}
+<img class='image-preview' src="/{{d}}"><br>
+<a target="_blank" class='btn btn-primary my-2' download href="{{site_url}}{{d}}">Download</a><br>
+{% endfor %}
+</div>
+
+{% endif %}
+{% endblock body %}

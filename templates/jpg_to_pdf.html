@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}JPG to PDF{% endblock title %}
+
+{% block body %}
+
+<form class='my-5 container' method="POST" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+<h2>Upload you Image</h2>
+  <div class="form-group">
+    <input name="jpg" type="file" class="form-control-file" id="jpg-image">
+    <div style=" display: none;" class="image-preview my-3" id="image-preview">
+      <img style="width: 300px" src="" id="inpimage" alt="Image Preview">
+    </div>
+  </div>
+  <button class='primary'>Submite</button>
+</form>
+
+<script>
+  const inpFile = document.getElementById('jpg-image')
+  const imagePreviewContainer = document.getElementById('image-preview')
+  const imagePreview = document.getElementById('inpimage')
+
+  inpFile.addEventListener('change' , function(){
+    file = this.files[0]
+
+    if (file){
+      const reader = new FileReader()
+      reader.addEventListener('load' , function(){
+        console.log(this.result);
+        imagePreviewContainer.style.display = 'block';
+        imagePreview.setAttribute('src' , this.result)
+      })
+      reader.readAsDataURL(file)
+    }
+  })
+
+</script>
+
+{% if request.method == 'POST' %}
+
+<a href='{{pdf_path}}'><h3>Download the PDF</h3></a>
+
+{% endif %}
+
+{% endblock body %}
