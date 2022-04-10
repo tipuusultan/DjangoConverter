@@ -25,22 +25,23 @@ def pdf_to_image(request):
         save_pdf = PDF(pdf=pdf_file)
         save_pdf.save()
         file_dir = f'{BASE_DIR}/media/PDF/{pdf_file.name}'
-        from pdf2image import convert_from_path
-        images = convert_from_path(file_dir, 500, poppler_path=r'C:\Program Files\poppler-0.68.0\bin')
+        import fitz  # PyMuPDF, imported as fitz for backward compatibility reasons
+        doc = fitz.open(file_dir)  # open document
+        i = 1
+        zip_files_name = []
+        user_dir = f'media/{ip_address}'
+
         user_file_dir = f'{BASE_DIR}/media/{ip_address}'
         if not os.path.exists(user_file_dir):
             os.mkdir(user_file_dir)
         
-        user_dir = f'media/{ip_address}'
-
-        zip_files_name = []
-
-        for i in range(len(images)):
-            files_name = f'{user_dir}/page'+ str(i) +'.jpg'
-            full_file_path = f'{user_dir}/{files_name}'
-            images[i].save(files_name, 'JPEG')
+        for page in doc:
+            pix = page.get_pixmap()  # render page to an image
+            files_name = f'{user_dir}/page'+ str(i) +'.png'
+            pix.save(files_name)
             zip_files_name.append(files_name)
-        
+            i+=1
+   
         zip_file_link = f'{user_dir}/Images.zip'
         handle = ZipFile(f'{user_dir}/Images.zip' , 'w')
         for z in zip_files_name:
